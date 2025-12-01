@@ -48,9 +48,10 @@ fn get_function_and_data(year: usize, day: usize) -> ((SolverType, SolverType), 
                 todo!();
             }
         },
-        2025 => {
-            todo!();
-        }
+        2025 => match day {
+            1 => (solvers_2025::day01::part1, solvers_2025::day01::part2),
+            _ => todo!(),
+        },
         _ => {
             todo!();
         }

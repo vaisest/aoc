@@ -24,6 +24,10 @@ def write_day(year, day, data):
 
 
 def fetch(year, day):
+    file = Path(f"input/{year}/day_{day:02}.txt")
+    if file.exists():
+        return
+
     print(f"Fetching day {day}")
     req = urllib.request.Request(f"https://adventofcode.com/{year}/day/{day}/input")
     req.add_header("Cookie", f"session={api_key}")
