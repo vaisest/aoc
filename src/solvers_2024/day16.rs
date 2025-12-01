@@ -27,7 +27,7 @@ impl Ord for Dijk {
 
 impl PartialOrd for Dijk {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cost.cmp(&other.cost).reverse())
+        Some(self.cmp(other))
     }
 }
 
@@ -60,7 +60,7 @@ fn turns(direction: &Direction) -> impl Iterator<Item = (Direction, u64)> {
     }
 }
 
-fn find_path(map: &Vec<Vec<Element>>, source: (usize, usize), target: (usize, usize)) -> u64 {
+fn find_path(map: &[Vec<Element>], source: (usize, usize), target: (usize, usize)) -> u64 {
     // dijkstra's algorithm, but instead of storing costs per 2d index, we want to store
     // them per (2d index, direction) as turning is treated separately from moving
     let mut costs = FxHashMap::default();
@@ -144,7 +144,7 @@ pub fn part1(input: String) -> String {
 }
 
 fn p2_paths(
-    map: &Vec<Vec<Element>>,
+    map: &[Vec<Element>],
     source: (usize, usize),
     target: (usize, usize),
 ) -> FxHashSet<(usize, usize)> {
@@ -169,10 +169,12 @@ fn p2_paths(
         let cur = heap.pop().unwrap();
 
         if cur.pos == target {
-            if shortest_cost.is_none() {
-                shortest_cost.replace(cur.cost);
-            } else if shortest_cost.unwrap() < cur.cost {
+            if let Some(shortest_cost) = shortest_cost
+                && shortest_cost < cur.cost
+            {
                 continue;
+            } else {
+                shortest_cost.replace(cur.cost);
             }
             tiles.extend(cur.path.unwrap().into_iter());
             continue;

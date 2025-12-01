@@ -11,8 +11,7 @@ fn traverse(i: usize, j: usize, matrix: &Matrix) -> u64 {
     queue.push((i, j));
 
     let mut total = 0;
-    while !queue.is_empty() {
-        let (y, x) = queue.pop().unwrap();
+    while let Some((y, x)) = queue.pop() {
         let current_elev = matrix[y][x];
 
         // our goal is elevation 9

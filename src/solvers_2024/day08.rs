@@ -1,14 +1,11 @@
-use std::{
-    collections::{BTreeMap, HashSet},
-    i32,
-};
+use std::collections::{BTreeMap, HashSet};
 
 use itertools::Itertools;
 
 type Matrix = Vec<Vec<char>>;
 
 fn distance_pair(lhs: &(usize, usize), rhs: &(usize, usize)) -> (i32, i32) {
-    return (rhs.0 as i32 - lhs.0 as i32, rhs.1 as i32 - lhs.1 as i32);
+    (rhs.0 as i32 - lhs.0 as i32, rhs.1 as i32 - lhs.1 as i32)
 }
 fn in_bounds_of(matrix_len: usize, coord: (i32, i32)) -> bool {
     coord.0 >= 0 && coord.0 < matrix_len as i32 && coord.1 >= 0 && coord.1 < matrix_len as i32
@@ -60,7 +57,7 @@ pub fn part1(input: String) -> String {
 
     for (_, positions) in unique_chars {
         for pair in positions.iter().combinations(2) {
-            anti_nodes.extend(p1_line_positions(&pair[0], &pair[1], matrix.len()));
+            anti_nodes.extend(p1_line_positions(pair[0], pair[1], matrix.len()));
         }
     }
 
@@ -106,7 +103,7 @@ pub fn part2(input: String) -> String {
 
     for (_, positions) in unique_chars {
         for pair in positions.iter().combinations(2) {
-            anti_nodes.extend(p2_line_positions(&pair[0], &pair[1], matrix.len()));
+            anti_nodes.extend(p2_line_positions(pair[0], pair[1], matrix.len()));
         }
     }
 

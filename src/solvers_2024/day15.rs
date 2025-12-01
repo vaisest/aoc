@@ -18,14 +18,12 @@ fn try_move_box(
 ) -> bool {
     let front = direction.apply_unchecked(coord);
     match matrix[front.0][front.1] {
-        AreaElement::Wall => {
-            return false;
-        }
+        AreaElement::Wall => false,
         AreaElement::Empty => {
             if moving_box {
                 matrix[front.0][front.1] = AreaElement::Box
             }
-            return true;
+            true
         }
         AreaElement::Box => {
             if try_move_box(matrix, front, direction, true) {

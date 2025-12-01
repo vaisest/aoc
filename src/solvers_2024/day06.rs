@@ -3,18 +3,18 @@ use rustc_hash::FxHashMap;
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Hash)]
 enum Direction {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
+    Up,
+    Down,
+    Left,
+    Right,
 }
 impl Direction {
     fn next_dir(&self) -> Self {
         match self {
-            Direction::UP => Direction::RIGHT,
-            Direction::RIGHT => Direction::DOWN,
-            Direction::DOWN => Direction::LEFT,
-            Direction::LEFT => Direction::UP,
+            Direction::Up => Direction::Right,
+            Direction::Right => Direction::Down,
+            Direction::Down => Direction::Left,
+            Direction::Left => Direction::Up,
         }
     }
 }
@@ -30,27 +30,27 @@ impl Coord {
     }
     fn apply_dir(&mut self, dir: &Direction) {
         match dir {
-            Direction::UP => self.y = self.y.wrapping_sub(1),
-            Direction::RIGHT => self.x += 1,
-            Direction::DOWN => self.y += 1,
-            Direction::LEFT => self.x = self.x.wrapping_sub(1),
+            Direction::Up => self.y = self.y.wrapping_sub(1),
+            Direction::Right => self.x += 1,
+            Direction::Down => self.y += 1,
+            Direction::Left => self.x = self.x.wrapping_sub(1),
         }
     }
     fn next_pos_towards(&self, dir: &Direction) -> Self {
         match dir {
-            Direction::UP => Coord {
+            Direction::Up => Coord {
                 y: self.y.wrapping_sub(1),
                 x: self.x,
             },
-            Direction::RIGHT => Coord {
+            Direction::Right => Coord {
                 y: self.y,
                 x: self.x + 1,
             },
-            Direction::DOWN => Coord {
+            Direction::Down => Coord {
                 y: self.y + 1,
                 x: self.x,
             },
-            Direction::LEFT => Coord {
+            Direction::Left => Coord {
                 y: self.y,
                 x: self.x.wrapping_sub(1),
             },
@@ -97,14 +97,14 @@ fn input_into_matrix(input: String) -> (Coord, Matrix) {
 
 fn walk(spawn_pos: &Coord, matrix: &Matrix) -> FxHashMap<Coord, Direction> {
     // finds guard's route by moving forward until we're in front of a wall and have to turn right
-    let mut pos = spawn_pos.clone();
+    let mut pos = *spawn_pos;
     let mut visited = FxHashMap::default();
-    let mut dir = Direction::UP;
+    let mut dir = Direction::Up;
     while pos.in_bounds(matrix.len()) {
         loop {
             if pos
                 .next_pos_towards(&dir)
-                .get_from(&matrix)
+                .get_from(matrix)
                 .is_some_and(|&it| it == Cell::Blocker)
             {
                 dir = dir.next_dir();
@@ -126,10 +126,10 @@ pub fn part1(input: String) -> String {
 
 fn idx_for_dir(dir: &Direction) -> usize {
     match dir {
-        Direction::UP => 0,
-        Direction::RIGHT => 1,
-        Direction::DOWN => 2,
-        Direction::LEFT => 3,
+        Direction::Up => 0,
+        Direction::Right => 1,
+        Direction::Down => 2,
+        Direction::Left => 3,
     }
 }
 
@@ -154,7 +154,7 @@ fn test_for_cycle(
         loop {
             let front = pos.next_pos_towards(&direction);
             if front
-                .get_from(&matrix)
+                .get_from(matrix)
                 .is_some_and(|&it| it == Cell::Blocker)
                 || front == blocker_pos
             {

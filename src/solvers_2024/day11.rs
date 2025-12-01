@@ -30,7 +30,7 @@ fn iter_each(stones: Vec<u64>, max_iter: u32) -> u64 {
 fn iterate_single_stone(
     stone: u64,
     iter_max: u32,
-    mut map: &mut FxHashMap<(u64, u32), u64>,
+    map: &mut FxHashMap<(u64, u32), u64>,
     // should start from zero
     iteration: u32,
 ) -> u64 {
@@ -47,16 +47,16 @@ fn iterate_single_stone(
     let res;
     if stone == 0 {
         // Stone is 0 => stone replaced by 1
-        res = iterate_single_stone(1, iter_max, &mut map, iteration + 1);
-    } else if (stone.ilog10() + 1) % 2 == 0 {
+        res = iterate_single_stone(1, iter_max, map, iteration + 1);
+    } else if (stone.ilog10() + 1).is_multiple_of(2) {
         // Stone digit count is even => Split in two, left half of digits on left one, right on right.
         let (l, r) = split_number_digitwise(stone, stone.ilog10() + 1);
 
-        res = iterate_single_stone(l, iter_max, &mut map, iteration + 1)
-            + iterate_single_stone(r, iter_max, &mut map, iteration + 1);
+        res = iterate_single_stone(l, iter_max, map, iteration + 1)
+            + iterate_single_stone(r, iter_max, map, iteration + 1);
     } else {
         // Otherwise => stone replace by multiplying it by 2024
-        res = iterate_single_stone(stone * 2024, iter_max, &mut map, iteration + 1);
+        res = iterate_single_stone(stone * 2024, iter_max, map, iteration + 1);
     }
     map.insert((stone, iteration), res);
     res

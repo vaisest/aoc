@@ -1,5 +1,3 @@
-use std::i64;
-
 use regex::Regex;
 
 use crate::solvers_2024::util::float_basically_integer;
@@ -43,12 +41,10 @@ impl Robot {
             } else {
                 Quadrant::TopRight
             }
+        } else if self.x < middle_horizontal {
+            Quadrant::BottomLeft
         } else {
-            if self.x < middle_horizontal {
-                Quadrant::BottomLeft
-            } else {
-                Quadrant::BottomRight
-            }
+            Quadrant::BottomRight
         }
     }
 }
@@ -70,7 +66,7 @@ fn parse_input(input: String) -> Vec<Robot> {
         .collect::<Vec<_>>()
 }
 
-fn calculate_scores(robots: &Vec<Robot>) -> i64 {
+fn calculate_scores(robots: &[Robot]) -> i64 {
     let mut scores = [0; 4];
     robots.iter().for_each(|robot| {
         match robot.get_quadrant() {
@@ -103,7 +99,7 @@ pub fn part1(input: String) -> String {
 
     calculate_scores(&robots).to_string()
 }
-fn vars(bots: &Vec<Robot>) -> (f64, f64) {
+fn vars(bots: &[Robot]) -> (f64, f64) {
     let n = bots.len() as f64;
 
     // pass to get means
@@ -116,7 +112,7 @@ fn vars(bots: &Vec<Robot>) -> (f64, f64) {
     let mean_y = sum_y as f64 / n;
 
     // pass to get variances
-    bots.into_iter()
+    bots.iter()
         .map(|&Robot { x, y, .. }| {
             let x_var = (x as f64 - mean_x).powi(2) / (n - 1.0);
             let y_var = (y as f64 - mean_y).powi(2) / (n - 1.0);

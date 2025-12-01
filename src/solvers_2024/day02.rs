@@ -7,7 +7,7 @@ fn verify_sequence_iter(mut sequence: impl Iterator<Item = i32>) -> bool {
     for number in sequence {
         let diff = last - number;
         if increasing.is_none() {
-            increasing.replace(if diff < 0 { false } else { true });
+            increasing.replace(diff >= 0);
         }
         // valid conditions: difference between each 1 < x < 3
         if (diff == 0 || diff.abs() > 3)
@@ -25,18 +25,14 @@ fn verify_sequence_iter(mut sequence: impl Iterator<Item = i32>) -> bool {
 pub fn part1(input: String) -> String {
     input
         .lines()
-        .filter_map(|line| {
+        .filter(|line| {
             let iterator = line
                 .split_whitespace()
                 .map(|it| it.parse::<i32>().unwrap())
                 .collect::<ArrayVec<i32, 8>>()
                 .into_iter();
 
-            if verify_sequence_iter(iterator) {
-                Some(line)
-            } else {
-                None
-            }
+            verify_sequence_iter(iterator)
         })
         .count()
         .to_string()
@@ -47,7 +43,7 @@ pub fn part2(input: String) -> String {
     // from the sequence to fix it
     input
         .lines()
-        .filter_map(|line| {
+        .filter(|line| {
             let vec = line
                 .split_whitespace()
                 .map(|it| it.parse::<i32>().unwrap())
@@ -63,10 +59,10 @@ pub fn part2(input: String) -> String {
                     .filter_map(|(j, x)| if i != j { Some(*x) } else { None });
 
                 if verify_sequence_iter(sequence) {
-                    return Some(line);
+                    return true;
                 }
             }
-            None
+            false
         })
         .count()
         .to_string()

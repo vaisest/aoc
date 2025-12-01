@@ -1,6 +1,7 @@
 use std::{cmp::Ordering, collections::BTreeSet};
 
 use arrayvec::ArrayVec;
+use itertools::Itertools;
 fn parse_input(input: String) -> (BTreeSet<(u32, u32)>, Vec<ArrayVec<u32, 24>>) {
     let (rules, pages) = input.split_once("\n\n").unwrap();
 
@@ -28,13 +29,13 @@ fn comp(lhs: u32, rhs: u32, rule_pairs: &BTreeSet<(u32, u32)>) -> bool {
     if rule_pairs.contains(&(lhs, rhs)) {
         return true;
     }
-    return false;
+    false
 }
 fn ord_comp(lhs: u32, rhs: u32, rule_pairs: &BTreeSet<(u32, u32)>) -> Ordering {
     if rule_pairs.contains(&(lhs, rhs)) {
         return Ordering::Less;
     }
-    return Ordering::Equal;
+    Ordering::Equal
 }
 pub fn part1(input: String) -> String {
     // this problem seems like a topological sort problem, but it seems the rule pair list is
@@ -61,9 +62,8 @@ pub fn part2(input: String) -> String {
         // filter to incorrect updates
         .filter(|update| !update.is_sorted_by(|&lhs, &rhs| comp(lhs, rhs, &rule_pairs)))
         // correct the incorrect updates
-        .map(|update| {
+        .update(|update| {
             update.sort_by(|lhs, rhs| ord_comp(*lhs, *rhs, &rule_pairs));
-            update
         })
         // and return sum of medians
         .map(|arr| arr[arr.len() / 2])

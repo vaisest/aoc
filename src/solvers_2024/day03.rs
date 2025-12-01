@@ -25,7 +25,7 @@ pub fn part2(input: String) -> String {
             (true, 0),
             |(instr_enable, total), cap| match cap.get(1) {
                 // if cmd command, change instr_enable
-                Some(cmd) => (if cmd.as_str() == "do()" { true } else { false }, total),
+                Some(cmd) => (cmd.as_str() == "do()", total),
                 // otherwise we got a mul(xxx, xxx) match, so add to total
                 None => (
                     instr_enable,

@@ -179,7 +179,7 @@ fn calculate_complexity(code: &str, robot_count: u32) -> usize {
 }
 
 pub fn part1(input: String) -> String {
-    let codes = input.lines().map(|line| line);
+    let codes = input.lines();
 
     codes
         .map(|code| calculate_complexity(code, 2))
@@ -188,7 +188,7 @@ pub fn part1(input: String) -> String {
 }
 
 pub fn part2(input: String) -> String {
-    let codes = input.lines().map(|line| line);
+    let codes = input.lines();
 
     codes
         .map(|code| calculate_complexity(code, 25))

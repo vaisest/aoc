@@ -40,7 +40,7 @@ fn solve(input: String, constant: f64, threshold_exp: i32) -> u64 {
     input
         .split("\n\n")
         // trailing newline
-        .filter(|&it| it != "")
+        .filter(|&it| !it.is_empty())
         .map(|block| {
             let mut it = block.lines();
             let button_a = it.next().unwrap();
@@ -72,7 +72,7 @@ fn solve(input: String, constant: f64, threshold_exp: i32) -> u64 {
 
             // threshold has to be adjustable as p2 numbers are too inaccurate,
             float_basically_integer(pair.0, threshold_exp).and_then(|lhs| {
-                float_basically_integer(pair.1, threshold_exp).and_then(|rhs| Some(lhs * 3 + rhs))
+                float_basically_integer(pair.1, threshold_exp).map(|rhs| lhs * 3 + rhs)
             })
         })
         .sum::<u64>()

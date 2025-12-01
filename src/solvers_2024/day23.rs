@@ -28,7 +28,7 @@ fn parse_input(input: &str) -> (FxHashMap<&str, FxHashSet<&str>>, Vec<&str>, usi
     let t_computers = map
         .keys()
         .filter(|str| str.starts_with('t'))
-        .map(|&it| it)
+        .copied()
         .collect::<Vec<_>>();
     let t_degree = t_computers
         .iter()

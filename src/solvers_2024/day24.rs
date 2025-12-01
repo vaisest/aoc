@@ -64,8 +64,8 @@ pub fn part2(input: String) -> String {
 
     // we need a map to know what operations follow another operation
     for &[lhs, op, rhs, ret] in gate_connections.iter() {
-        wire_map.entry(lhs).or_insert(vec![]).push((op, ret));
-        wire_map.entry(rhs).or_insert(vec![]).push((op, ret));
+        wire_map.entry(lhs).or_default().push((op, ret));
+        wire_map.entry(rhs).or_default().push((op, ret));
     }
 
     let mut wrong_outputs = vec![];
@@ -73,8 +73,7 @@ pub fn part2(input: String) -> String {
         // basically we ensure the adder looks like this:
         // https://en.wikipedia.org/wiki/Adder_(electronics)#/media/File:Fulladder.gif
         let chained_ops = wire_map.get(&ret);
-        let chained_ops_contain =
-            |op| chained_ops.is_some_and(|v| v.iter().find(|a| a.0 == op).is_some());
+        let chained_ops_contain = |op| chained_ops.is_some_and(|v| v.iter().any(|a| a.0 == op));
 
         let has_chained_xor = chained_ops_contain("XOR");
         let has_chained_and = chained_ops_contain("AND");
@@ -88,36 +87,21 @@ pub fn part2(input: String) -> String {
         let valid = match op {
             "XOR" => {
                 // XOR only outputs a bit if it doesn't take an input bit
-                if !takes_input_bit && outputs_bit {
-                    true
+                (!takes_input_bit && outputs_bit) ||
                 // XOR only takes an input bit if a XOR follows it
-                } else if takes_input_bit && has_chained_xor {
-                    true
+                takes_input_bit && has_chained_xor ||
                 // unless the input bits are the first bits (no carryover bit exists)
-                } else if takes_first_input && outputs_bit {
-                    true
-                } else {
-                    false
-                }
+                (takes_first_input && outputs_bit)
             }
             "OR" => {
                 // OR either outputs into z45 or an AND and XOR (carryover bit)
-                if outputs_last_bit || (has_chained_and && has_chained_xor) {
-                    true
-                } else {
-                    false
-                }
+                outputs_last_bit || (has_chained_and && has_chained_xor)
             }
             "AND" => {
                 // ANDs only lead into ORs
-                if has_chained_or {
-                    true
+                has_chained_or ||
                 // unless the input bits are the first bits (no carryover bit exists)
-                } else if takes_first_input {
-                    true
-                } else {
-                    false
-                }
+                takes_first_input
             }
             _ => {
                 unreachable!()

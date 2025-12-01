@@ -1,7 +1,6 @@
 use std::{
     collections::{BTreeMap, BTreeSet},
     fmt::Debug,
-    usize,
 };
 
 use itertools::Itertools;
@@ -14,21 +13,14 @@ enum Space {
 impl Debug for Space {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            &Space::File(a) => write!(f, "{}", a),
-            &Space::Free => write!(f, "."),
+            Space::File(a) => write!(f, "{}", a),
+            Space::Free => write!(f, "."),
         }
     }
 }
-fn scan_to_next_free(vec: &Vec<Space>, mut it: usize) -> Option<usize> {
-    loop {
-        match vec[it] {
-            Space::File(_) => {
-                it += 1;
-            }
-            Space::Free => {
-                break;
-            }
-        }
+fn scan_to_next_free(vec: &[Space], mut it: usize) -> Option<usize> {
+    while let Space::File(_) = vec[it] {
+        it += 1;
         if it >= vec.len() {
             return None;
         }
@@ -40,7 +32,7 @@ pub fn part1(input: String) -> String {
     let mut vec = Vec::new();
     input
         .chars()
-        .filter(|c| c.is_digit(10))
+        .filter(|c| c.is_ascii_digit())
         .chunks(2)
         .into_iter()
         .map(|mut chunk| {
@@ -88,14 +80,14 @@ pub fn part1(input: String) -> String {
 }
 
 fn try_move(
-    vec: &mut Vec<Space>,
-    buf: &Vec<usize>,
+    vec: &mut [Space],
+    buf: &[usize],
     space_spans: &mut BTreeMap<usize, BTreeSet<usize>>,
     from_index: usize,
 ) -> bool {
     // flush buffer into first contiguous free fitting span of blocks
 
-    assert!(buf.len() != 0);
+    assert!(!buf.is_empty());
 
     // find first free slot that's to the left of our source
     let span = space_spans
@@ -117,7 +109,7 @@ fn try_move(
     }
 
     // resize or remove the free span
-    if idx_set.len() == 0 {
+    if idx_set.is_empty() {
         space_spans.remove(&len);
     }
     if buf.len() != len {
@@ -141,7 +133,7 @@ pub fn part2(input: String) -> String {
     // assert!(input.len().rem(2) == 1);
     input
         .chars()
-        .filter(|c| c.is_digit(10))
+        .filter(|c| c.is_ascii_digit())
         .chunks(2)
         .into_iter()
         .map(|mut chunk| {
@@ -176,7 +168,7 @@ pub fn part2(input: String) -> String {
         match vec[right] {
             // if buffer isn't empty and we hit a free block, try move
             Space::Free => {
-                if buf.len() != 0 {
+                if !buf.is_empty() {
                     try_move(&mut vec, &buf, &mut space_spans, right + 1);
                     lowest_id_processed = *buf.last().unwrap();
                     buf.clear();

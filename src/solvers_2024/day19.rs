@@ -49,7 +49,7 @@ fn try_p2<'a>(design: &'a str, patterns: &Vec<&str>, cache: &mut FxHashMap<&'a s
     }
     let mut count = 0;
     // base case
-    if design == "" {
+    if design.is_empty() {
         return 1;
     }
 
@@ -59,8 +59,8 @@ fn try_p2<'a>(design: &'a str, patterns: &Vec<&str>, cache: &mut FxHashMap<&'a s
             break;
         }
         // recurse with all matching patterns removed from the beginning
-        if design.starts_with(pattern) {
-            count += try_p2(&design[pattern.len()..], patterns, cache);
+        if let Some(stripped) = design.strip_prefix(pattern) {
+            count += try_p2(stripped, patterns, cache);
         }
     }
     cache.insert(design, count);

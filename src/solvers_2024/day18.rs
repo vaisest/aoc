@@ -9,7 +9,7 @@ enum Tile {
 }
 
 fn find_shortest_path(
-    area: &Vec<Vec<Tile>>,
+    area: &[Vec<Tile>],
     source: (usize, usize),
     target: (usize, usize),
 ) -> Option<u64> {
@@ -39,7 +39,7 @@ fn find_shortest_path(
     None
 }
 
-fn has_path(area: &Vec<Vec<Tile>>, source: (usize, usize), target: (usize, usize)) -> bool {
+fn has_path(area: &[Vec<Tile>], source: (usize, usize), target: (usize, usize)) -> bool {
     // DFS.
     // [bool] seems to be slightly faster than a bitarr here
     let mut seen = [false; 71 * 71];
@@ -85,13 +85,10 @@ pub fn part1(input: String) -> String {
         .to_string()
 }
 
-fn index_is_tile_or_none(area: &Vec<Vec<Tile>>, y: usize, x: usize) -> bool {
-    get_2d(area, (y, x)).is_none_or(|tile| match tile {
-        Tile::Wall => true,
-        _ => false,
-    })
+fn index_is_tile_or_none(area: &[Vec<Tile>], y: usize, x: usize) -> bool {
+    get_2d(area, (y, x)).is_none_or(|tile| matches!(tile, Tile::Wall))
 }
-fn blocks_any_path(area: &Vec<Vec<Tile>>, y: usize, x: usize) -> bool {
+fn blocks_any_path(area: &[Vec<Tile>], y: usize, x: usize) -> bool {
     if (index_is_tile_or_none(area, y, x.wrapping_sub(1)) && index_is_tile_or_none(area, y, x + 1))
         || (index_is_tile_or_none(area, y.wrapping_sub(1), x)
             && index_is_tile_or_none(area, y + 1, x))

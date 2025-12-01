@@ -6,7 +6,7 @@ fn traverse(
     i: usize,
     j: usize,
     matrix: &Matrix,
-    mut visited: &mut FxHashSet<(usize, usize)>,
+    visited: &mut FxHashSet<(usize, usize)>,
 ) -> (usize, usize) {
     let mut area = 1;
     let mut perimeter = 4;
@@ -23,7 +23,7 @@ fn traverse(
             continue;
         }
 
-        let (other_area, other_perimeter) = traverse(y, x, &matrix, &mut visited);
+        let (other_area, other_perimeter) = traverse(y, x, matrix, visited);
         area += other_area;
         perimeter += other_perimeter;
     }
@@ -141,10 +141,10 @@ fn traverse_p2(
     i: usize,
     j: usize,
     matrix: &Matrix,
-    mut visited: &mut FxHashSet<(usize, usize)>,
+    visited: &mut FxHashSet<(usize, usize)>,
 ) -> (u64, u64) {
     let mut area = 1;
-    let mut corners = corners(i, j, &matrix);
+    let mut corners = corners(i, j, matrix);
     visited.insert((i, j));
     for (y, x) in adjacent_in_bounds(i, j, matrix.len()) {
         // iterate through neighbours of same character
@@ -156,7 +156,7 @@ fn traverse_p2(
             continue;
         }
 
-        let (other_area, other_corners) = traverse_p2(y, x, &matrix, &mut visited);
+        let (other_area, other_corners) = traverse_p2(y, x, matrix, visited);
         area += other_area;
         corners += other_corners;
     }

@@ -13,7 +13,7 @@ fn try_apply_direction<'a>(
 }
 
 // fn char_lines(input: String) -> impl Iterator<Item = Vec<u8>> {
-fn char_lines(bytes: &Vec<u8>) -> impl Iterator<Item = &[u8]> {
+fn char_lines(bytes: &[u8]) -> impl Iterator<Item = &[u8]> {
     bytes
         .split(|c| {
             if c.is_ascii() {
@@ -22,7 +22,7 @@ fn char_lines(bytes: &Vec<u8>) -> impl Iterator<Item = &[u8]> {
                 panic!("input is not ascii. is it not a regular aoc input file?")
             }
         })
-        .filter(|line| line.len() != 0)
+        .filter(|line| !line.is_empty())
 }
 
 pub fn part1(input: String) -> String {

@@ -11,8 +11,8 @@ struct RaceState {
 }
 
 fn sum_all_cheats(
-    track: &Vec<Vec<Tile>>,
-    distances: &Vec<Vec<u64>>,
+    track: &[Vec<Tile>],
+    distances: &[Vec<u64>],
     max_cheat_time: i64,
     minimum_cheat_advantage: i64,
 ) -> usize {
@@ -25,9 +25,9 @@ fn sum_all_cheats(
                 continue;
             }
             result += cheat_advantages(
-                &track,
+                track,
                 (y, x),
-                &distances,
+                distances,
                 max_cheat_time,
                 minimum_cheat_advantage,
             );
@@ -37,9 +37,9 @@ fn sum_all_cheats(
 }
 
 fn cheat_advantages(
-    track: &Vec<Vec<Tile>>,
+    track: &[Vec<Tile>],
     source: (usize, usize),
-    distances: &Vec<Vec<u64>>,
+    distances: &[Vec<u64>],
     max_cheat_time: i64,
     required_cheat_advantage: i64,
 ) -> usize {
@@ -79,6 +79,7 @@ fn cheat_advantages(
     count
 }
 
+#[allow(clippy::type_complexity)]
 fn parse_input(input: String) -> (Vec<Vec<Tile>>, (usize, usize), (usize, usize)) {
     let mut start = (0, 0);
     let mut end = (0, 0);
@@ -113,7 +114,7 @@ fn parse_input(input: String) -> (Vec<Vec<Tile>>, (usize, usize), (usize, usize)
 }
 
 fn calculate_distances(
-    track: &Vec<Vec<Tile>>,
+    track: &[Vec<Tile>],
     start: (usize, usize),
     end: (usize, usize),
 ) -> Vec<Vec<u64>> {

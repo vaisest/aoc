@@ -4,7 +4,7 @@ pub fn adjacent_in_bounds(
     matrix_len: usize,
 ) -> impl Iterator<Item = (usize, usize)> {
     const ADJACENTS: [(i32, i32); 4] = [(1, 0), (-1, 0), (0, -1), (0, 1)]; // up down left right
-    return ADJACENTS.iter().filter_map(move |(dy, dx)| {
+    ADJACENTS.iter().filter_map(move |(dy, dx)| {
         let pair = (y as i32 + *dy, x as i32 + *dx);
         let legal_range = 0..(matrix_len as i32);
         if legal_range.contains(&pair.0) && legal_range.contains(&pair.1) {
@@ -12,10 +12,10 @@ pub fn adjacent_in_bounds(
         } else {
             None
         }
-    });
+    })
 }
 
-pub fn get_2d<T>(matrix: &Vec<Vec<T>>, (y, x): (usize, usize)) -> Option<&T> {
+pub fn get_2d<T>(matrix: &[Vec<T>], (y, x): (usize, usize)) -> Option<&T> {
     matrix.get(y).and_then(|row| row.get(x))
 }
 

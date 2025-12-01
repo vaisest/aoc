@@ -20,7 +20,7 @@ fn check(desired_result: u64, op_slice: &[u64], try_concatenation: bool) -> bool
         [head @ .., operand] => {
             let greater = desired_result > *operand;
             // if the end result is divisible, last might be a part of a multiplier operation
-            (desired_result % operand == 0 && check(desired_result / operand, head, try_concatenation))
+            (desired_result.is_multiple_of(*operand) && check(desired_result / operand, head, try_concatenation))
             // and concatenation is only possible if the last digits are equal to it
             || (try_concatenation && greater && is_suffix(desired_result, *operand) && check(desired_result / 10u64.pow(operand.ilog10()+1), head, try_concatenation))
             // addition is almost always possible so we leave it for the last
@@ -48,7 +48,7 @@ fn is_suffix(big: u64, small: u64) -> bool {
     // take the same last digits as small has, we should get zero if it is a
     // suffix
     let small_digits = small.ilog10() + 1;
-    (big - small) % 10u64.pow(small_digits) == 0
+    (big - small).is_multiple_of(10u64.pow(small_digits))
 }
 
 pub fn part2(input: String) -> String {

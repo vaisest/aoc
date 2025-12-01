@@ -5,13 +5,13 @@ pub fn part1(input: String) -> String {
         let mut bits = 0u64;
         block
             .lines()
-            .map(|line| line.chars())
-            .flatten()
+            .flat_map(|line| line.chars())
             .enumerate()
-            .for_each(|(i, c)| match c {
+            .for_each(|(i, c)| {
                 // set i-th bit
-                '#' => bits |= 1 << i,
-                _ => {}
+                if c == '#' {
+                    bits |= 1 << i
+                }
             });
         if bits & 1 == 1 {
             locks.push(bits);

@@ -1,5 +1,3 @@
-use std::u64;
-
 use itertools::Itertools;
 
 fn combo(operand: u64, registers: &[u64; 3]) -> u64 {
@@ -26,12 +24,12 @@ fn execute_cycle(
         // adv
         0 => {
             operand = combo(operand, registers);
-            registers[0] = registers[0] / 2u64.pow(operand.try_into().unwrap());
+            registers[0] /= 2u64.pow(operand.try_into().unwrap());
             *pointer += 2;
         }
         // bxl
         1 => {
-            registers[1] = registers[1] ^ operand;
+            registers[1] ^= operand;
             *pointer += 2;
         }
         // bst
@@ -50,7 +48,7 @@ fn execute_cycle(
         }
         // bxc
         4 => {
-            registers[1] = registers[1] ^ registers[2];
+            registers[1] ^= registers[2];
             *pointer += 2;
         }
         // out
@@ -94,13 +92,13 @@ fn parse_input(input: String) -> ([u64; 3], Vec<u64>) {
         .collect::<Vec<u64>>();
     (registers, actions)
 }
-fn run_program(mut registers: &mut [u64; 3], opcodes: &Vec<u64>) -> Vec<u64> {
+fn run_program(registers: &mut [u64; 3], opcodes: &[u64]) -> Vec<u64> {
     let mut pointer = 0;
     let mut output = vec![];
     while pointer < opcodes.len() {
         let opcode = opcodes[pointer];
         let operand = opcodes[pointer + 1];
-        execute_cycle(opcode, operand, &mut registers, &mut pointer, &mut output);
+        execute_cycle(opcode, operand, registers, &mut pointer, &mut output);
     }
     output
 }
@@ -132,7 +130,7 @@ pub fn part2(input: String) -> String {
         for i in 0b000..=0b111 {
             let a_register_test = candidate << 3 | i;
 
-            let mut registers = original_registers.clone();
+            let mut registers = original_registers;
             registers[0] = a_register_test;
 
             let output = run_program(&mut registers, &opcodes);
