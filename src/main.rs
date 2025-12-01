@@ -16,7 +16,7 @@ fn read_input(year: &str, day: &str) -> String {
 type SolverType = fn(String) -> String;
 fn get_function_and_data(year: usize, day: usize) -> ((SolverType, SolverType), String) {
     // i couldn't figure out a way to macro this :/
-    let input = read_input(&year.to_string(), &format!("{:0>2}", day));
+    let input = read_input(&year.to_string(), &format!("{day:0>2}"));
     let functions: (SolverType, SolverType) = match year {
         2024 => match day {
             1 => (solvers_2024::day01::part1, solvers_2024::day01::part2),
@@ -48,11 +48,8 @@ fn get_function_and_data(year: usize, day: usize) -> ((SolverType, SolverType), 
                 todo!();
             }
         },
-        2025 => match day {
-            // 1 => (solvers_2025::day01::part1, solvers_2025::day01::part2),
-            _ => {
-                todo!();
-            }
+        2025 => {
+            todo!();
         },
         _ => {
             todo!();

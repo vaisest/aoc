@@ -36,7 +36,7 @@ pub enum Direction {
     Right,
 }
 impl Direction {
-    pub fn apply_unchecked(&self, (y, x): (usize, usize)) -> (usize, usize) {
+    pub fn apply_unchecked(self, (y, x): (usize, usize)) -> (usize, usize) {
         // no bounds checking required as the area is padded
         match self {
             Direction::Up => (y - 1, x),

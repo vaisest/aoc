@@ -10,7 +10,7 @@ pub fn part1(input: String) -> String {
             .for_each(|(i, c)| {
                 // set i-th bit
                 if c == '#' {
-                    bits |= 1 << i
+                    bits |= 1 << i;
                 }
             });
         if bits & 1 == 1 {

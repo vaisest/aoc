@@ -49,7 +49,7 @@ pub fn part1(input: String) -> String {
     for i in 0..64 {
         let s = format!("z{i:02}");
         if let Some(&val) = wire_map.get(&s.as_str()) {
-            out |= (val as u64) << i
+            out |= (val as u64) << i;
         } else {
             break;
         }

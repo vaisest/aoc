@@ -65,7 +65,7 @@ fn find_cliques_from(
         if current.len() == 3 {
             // the special case of having a multi-t sequence
             if current[1].starts_with('t') || current[2].starts_with('t') {
-                current.sort();
+                current.sort_unstable();
                 multi_t.insert(current.join(""));
             } else {
                 total += 1;
@@ -113,7 +113,7 @@ fn find_maxmimum_clique_from(
     let mut seen = FxHashSet::default();
     while let Some(mut current) = stack.pop() {
         if current.len() == k {
-            current.sort();
+            current.sort_unstable();
             return Some(current.join(","));
         }
         // there may be duplicates that are discovered in a different order, and

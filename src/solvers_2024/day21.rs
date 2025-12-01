@@ -124,12 +124,16 @@ fn calculate_button_press_count(numpad_result: String, iterations_after_first: u
     let chars = ['<', '>', '^', 'v', 'A'];
     // pre-calculate amount of button presses needed for all moves (i.e. from
     // button '>' to '<')
-    let mut count_map = FxHashMap::from_iter(chars.iter().permutations(2).map(|vec| {
-        let mut output = String::new();
-        dirpad_path_to(*vec[1], &mut dirpad_pos(*vec[0]), &mut output);
-        output.push('A');
-        ((*vec[0], *vec[1]), output.len())
-    }));
+    let mut count_map = chars
+        .iter()
+        .permutations(2)
+        .map(|vec| {
+            let mut output = String::new();
+            dirpad_path_to(*vec[1], &mut dirpad_pos(*vec[0]), &mut output);
+            output.push('A');
+            ((*vec[0], *vec[1]), output.len())
+        })
+        .collect::<FxHashMap<_, _>>();
 
     // sum the cost of a set of movements on a direction pad, starting from 'A'
     let sum_path = |moves: String, count_map: &FxHashMap<(char, char), usize>| {
