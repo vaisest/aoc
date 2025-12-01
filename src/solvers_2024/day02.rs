@@ -57,10 +57,10 @@ pub fn part2(input: String) -> String {
                 // drop ith number and verify that slice.
                 // there seem to only be up to 6 numbers per
                 // line which makes this not-too-expensive
-                let sequence =
-                    vec.iter()
-                        .enumerate()
-                        .filter_map(|(j, x)| if i != j { Some(*x) } else { None });
+                let sequence = vec
+                    .iter()
+                    .enumerate()
+                    .filter_map(|(j, x)| if i != j { Some(*x) } else { None });
 
                 if verify_sequence_iter(sequence) {
                     return Some(line);
