@@ -8,9 +8,9 @@ pub fn adjacent_in_bounds(
         let pair = (y as i32 + *dy, x as i32 + *dx);
         let legal_range = 0..(matrix_len as i32);
         if legal_range.contains(&pair.0) && legal_range.contains(&pair.1) {
-            return Some((pair.0 as usize, pair.1 as usize));
+            Some((pair.0 as usize, pair.1 as usize))
         } else {
-            return None;
+            None
         }
     });
 }

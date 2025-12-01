@@ -1,8 +1,9 @@
-use crate::solvers_2024::*;
 use clap::Parser;
 use std::{fs, hint::black_box, time::Instant};
 
 mod solvers_2024;
+mod solvers_2025;
+
 fn read_input(year: &str, day: &str) -> String {
     let path = format!("input/{year}/day_{day}.txt");
     fs::read_to_string(&path)
@@ -14,54 +15,57 @@ fn read_input(year: &str, day: &str) -> String {
 
 type SolverType = fn(String) -> String;
 fn get_function_and_data(year: usize, day: usize) -> ((SolverType, SolverType), String) {
-    match year {
+    // i couldn't figure out a way to macro this :/
+    let input = read_input(&year.to_string(), &format!("{:0>2}", day));
+    let functions: (SolverType, SolverType) = match year {
         2024 => match day {
-            1 => (
-                (solvers_2024::day01::part1, day01::part2),
-                read_input("2024", "01"),
-            ),
-            2 => ((day02::part1, day02::part2), read_input("2024", "02")),
-            3 => ((day03::part1, day03::part2), read_input("2024", "03")),
-            4 => ((day04::part1, day04::part2), read_input("2024", "04")),
-            5 => ((day05::part1, day05::part2), read_input("2024", "05")),
-            6 => ((day06::part1, day06::part2), read_input("2024", "06")),
-            7 => ((day07::part1, day07::part2), read_input("2024", "07")),
-            8 => ((day08::part1, day08::part2), read_input("2024", "08")),
-            9 => ((day09::part1, day09::part2), read_input("2024", "09")),
-            10 => ((day10::part1, day10::part2), read_input("2024", "10")),
-            11 => ((day11::part1, day11::part2), read_input("2024", "11")),
-            12 => ((day12::part1, day12::part2), read_input("2024", "12")),
-            13 => ((day13::part1, day13::part2), read_input("2024", "13")),
-            14 => ((day14::part1, day14::part2), read_input("2024", "14")),
-            15 => ((day15::part1, day15::part2), read_input("2024", "15")),
-            16 => ((day16::part1, day16::part2), read_input("2024", "16")),
-            17 => ((day17::part1, day17::part2), read_input("2024", "17")),
-            18 => ((day18::part1, day18::part2), read_input("2024", "18")),
-            19 => ((day19::part1, day19::part2), read_input("2024", "19")),
-            20 => ((day20::part1, day20::part2), read_input("2024", "20")),
-            21 => ((day21::part1, day21::part2), read_input("2024", "21")),
-            22 => ((day22::part1, day22::part2), read_input("2024", "22")),
-            23 => ((day23::part1, day23::part2), read_input("2024", "23")),
-            24 => ((day24::part1, day24::part2), read_input("2024", "24")),
-            25 => ((day25::part1, day25::part2), read_input("2024", "25")),
+            1 => (solvers_2024::day01::part1, solvers_2024::day01::part2),
+            2 => (solvers_2024::day02::part1, solvers_2024::day02::part2),
+            3 => (solvers_2024::day03::part1, solvers_2024::day03::part2),
+            4 => (solvers_2024::day04::part1, solvers_2024::day04::part2),
+            5 => (solvers_2024::day05::part1, solvers_2024::day05::part2),
+            6 => (solvers_2024::day06::part1, solvers_2024::day06::part2),
+            7 => (solvers_2024::day07::part1, solvers_2024::day07::part2),
+            8 => (solvers_2024::day08::part1, solvers_2024::day08::part2),
+            9 => (solvers_2024::day09::part1, solvers_2024::day09::part2),
+            10 => (solvers_2024::day10::part1, solvers_2024::day10::part2),
+            11 => (solvers_2024::day11::part1, solvers_2024::day11::part2),
+            12 => (solvers_2024::day12::part1, solvers_2024::day12::part2),
+            13 => (solvers_2024::day13::part1, solvers_2024::day13::part2),
+            14 => (solvers_2024::day14::part1, solvers_2024::day14::part2),
+            15 => (solvers_2024::day15::part1, solvers_2024::day15::part2),
+            16 => (solvers_2024::day16::part1, solvers_2024::day16::part2),
+            17 => (solvers_2024::day17::part1, solvers_2024::day17::part2),
+            18 => (solvers_2024::day18::part1, solvers_2024::day18::part2),
+            19 => (solvers_2024::day19::part1, solvers_2024::day19::part2),
+            20 => (solvers_2024::day20::part1, solvers_2024::day20::part2),
+            21 => (solvers_2024::day21::part1, solvers_2024::day21::part2),
+            22 => (solvers_2024::day22::part1, solvers_2024::day22::part2),
+            23 => (solvers_2024::day23::part1, solvers_2024::day23::part2),
+            24 => (solvers_2024::day24::part1, solvers_2024::day24::part2),
+            25 => (solvers_2024::day25::part1, solvers_2024::day25::part2),
             _ => {
                 todo!();
             }
         },
-        2025 => {
-            todo!();
-        }
+        2025 => match day {
+            // 1 => (solvers_2025::day01::part1, solvers_2025::day01::part2),
+            _ => {
+                todo!();
+            }
+        },
         _ => {
             todo!();
         }
-    }
+    };
+    (functions, input)
 }
-fn run_bench(day: usize, part: usize, f: SolverType, input: &String) {
+fn run_bench(day: usize, part: usize, f: SolverType, input: &str) {
     let timer = Instant::now();
     let mut run_count = 0;
     const MIN_TIME_MILLIS: u128 = 750;
     while timer.elapsed().as_millis() < MIN_TIME_MILLIS {
-        black_box(f(black_box(input.clone())));
+        black_box(f(black_box(input.to_string())));
         run_count += 1;
         if run_count > 3333 {
             break;
