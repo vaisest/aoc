@@ -2,7 +2,9 @@
 # as the AoC creators consider it to be copyrighted.
 
 # The legal details seem dubious, but let's comply anyway:
-# Ignore everything in this directory
+# Ignore every file in this directory but not subdirectories
 *
+!2024/
+!2025/
 # Except this file
 !.gitignore

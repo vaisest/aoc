@@ -1,4 +1,5 @@
-import requests
+import urllib.request
+from urllib.error import HTTPError
 from pathlib import Path
 
 api_key = ""
@@ -13,8 +14,8 @@ except IOError:
         f.write(api_key)
 
 
-def write_day(day, data):
-    file = Path(f"input/day_{day:02}.txt")
+def write_day(year, day, data):
+    file = Path(f"input/{year}/day_{day:02}.txt")
     if not file.exists():
         with open(file, "w") as f:
             f.write(data)
@@ -22,15 +23,22 @@ def write_day(day, data):
         print(f"{file} already exists")
 
 
-for day in range(1, 25 + 1):
+def fetch(year, day):
     print(f"Fetching day {day}")
-    cookies = {"session": api_key}
-    req = requests.get(
-        f"https://adventofcode.com/2024/day/{day}/input", cookies=cookies
-    )
-    if req.status_code == 404:
-        print(f"Day {day} not available yet")
-        continue
-    req.raise_for_status()
+    req = urllib.request.Request(f"https://adventofcode.com/{year}/day/{day}/input")
+    req.add_header("Cookie", f"session={api_key}")
+    try:
+        data = urllib.request.urlopen(req, timeout=10).read().decode()
+        write_day(year, day, data)
+    except HTTPError as e:
+        if e.code == 404:
+            print(f"Year {year} day {day} not available yet")
+            return
+        raise e
 
-    write_day(day, req.text)
+
+for day in range(1, 25 + 1):
+    fetch(2024, day)
+
+for day in range(1, 12 + 1):
+    fetch(2025, day)

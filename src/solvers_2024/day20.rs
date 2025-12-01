@@ -1,4 +1,4 @@
-use crate::solvers::util::adjacent_in_bounds;
+use crate::solvers_2024::util::adjacent_in_bounds;
 
 #[derive(Debug, PartialEq, Eq)]
 enum Tile {

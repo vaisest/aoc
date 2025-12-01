@@ -27,9 +27,7 @@ fn char_lines(bytes: &Vec<u8>) -> impl Iterator<Item = &[u8]> {
 
 pub fn part1(input: String) -> String {
     let u8s = input.into_bytes();
-    let mat = char_lines(&u8s)
-        // .map(|line| line.to_vec())
-        .collect::<Vec<_>>();
+    let mat = char_lines(&u8s).collect::<Vec<_>>();
 
     // ensure input is square
     assert!(mat.iter().all(|line| line.len() == mat.len()));
