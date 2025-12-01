@@ -11,7 +11,7 @@ enum AreaElement {
 fn try_move_box(
     matrix: &mut Vec<Vec<AreaElement>>,
     coord: (usize, usize),
-    direction: &Direction,
+    direction: Direction,
     moving_box: bool,
     // return true -> bot moves
     // return false -> bot doesn't move (hits wall)
@@ -21,7 +21,7 @@ fn try_move_box(
         AreaElement::Wall => false,
         AreaElement::Empty => {
             if moving_box {
-                matrix[front.0][front.1] = AreaElement::Box
+                matrix[front.0][front.1] = AreaElement::Box;
             }
             true
         }
@@ -74,8 +74,8 @@ pub fn part1(input: String) -> String {
         _ => unreachable!("malformed input"),
     });
 
-    for command in commands.into_iter() {
-        if try_move_box(&mut area, robot_coord, &command, false) {
+    for command in commands {
+        if try_move_box(&mut area, robot_coord, command, false) {
             robot_coord = command.apply_unchecked(robot_coord);
         }
     }
@@ -110,7 +110,7 @@ pub fn part1(input: String) -> String {
 
 fn move_p2(
     area: &mut Vec<Vec<AreaElement>>,
-    direction: &Direction,
+    direction: Direction,
     coord: (usize, usize),
     // up/down moves require two passes as otherwise
     // we might only move half the boxes
@@ -148,7 +148,7 @@ fn move_p2(
     }
 }
 
-fn move_lr(area: &mut Vec<Vec<AreaElement>>, direction: &Direction, coord: (usize, usize)) -> bool {
+fn move_lr(area: &mut Vec<Vec<AreaElement>>, direction: Direction, coord: (usize, usize)) -> bool {
     match area[coord.0][coord.1] {
         AreaElement::Empty => true,
         AreaElement::Wall => false,
@@ -211,13 +211,13 @@ pub fn part2(input: String) -> String {
         let next_spot = direction.apply_unchecked(robot_coord);
         let moved = match direction {
             Direction::Down | Direction::Up => {
-                if move_p2(&mut area, &direction, next_spot, true) {
-                    move_p2(&mut area, &direction, next_spot, false)
+                if move_p2(&mut area, direction, next_spot, true) {
+                    move_p2(&mut area, direction, next_spot, false)
                 } else {
                     false
                 }
             }
-            Direction::Left | Direction::Right => move_lr(&mut area, &direction, next_spot),
+            Direction::Left | Direction::Right => move_lr(&mut area, direction, next_spot),
         };
         if moved {
             robot_coord = next_spot;

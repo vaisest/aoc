@@ -8,11 +8,11 @@ fn split_number_digitwise(n: u64, digit_count: u32) -> (u64, u64) {
 }
 
 pub fn part1(input: String) -> String {
+    const N_ITER: u32 = 25;
     let stones = input
         .split_whitespace()
         .map(|word| word.parse::<u64>().unwrap())
         .collect::<Vec<u64>>();
-    const N_ITER: u32 = 25;
     iter_each(stones, N_ITER).to_string()
 }
 
@@ -20,7 +20,7 @@ fn iter_each(stones: Vec<u64>, max_iter: u32) -> u64 {
     let mut memo = FxHashMap::default();
 
     let mut count = 0u64;
-    for origin_stone in stones.iter() {
+    for origin_stone in &stones {
         count += iterate_single_stone(*origin_stone, max_iter, &mut memo, 0);
         memo.clear();
     }
@@ -63,11 +63,11 @@ fn iterate_single_stone(
 }
 
 pub fn part2(input: String) -> String {
+    const N_ITER: u32 = 75;
     let stones = input
         .split_whitespace()
         .map(|word| word.parse::<u64>().unwrap())
         .collect::<Vec<u64>>();
-    const N_ITER: u32 = 75;
     iter_each(stones, N_ITER).to_string()
 }
 

@@ -13,7 +13,7 @@ enum Space {
 impl Debug for Space {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Space::File(a) => write!(f, "{}", a),
+            Space::File(a) => write!(f, "{a}"),
             Space::Free => write!(f, "."),
         }
     }
@@ -32,7 +32,7 @@ pub fn part1(input: String) -> String {
     let mut vec = Vec::new();
     input
         .chars()
-        .filter(|c| c.is_ascii_digit())
+        .filter(char::is_ascii_digit)
         .chunks(2)
         .into_iter()
         .map(|mut chunk| {
@@ -46,7 +46,7 @@ pub fn part1(input: String) -> String {
         .enumerate()
         .for_each(|(file_id, (file_len, free_len))| {
             for _ in 0..file_len {
-                vec.push(Space::File(file_id))
+                vec.push(Space::File(file_id));
             }
             for _ in 0..free_len {
                 vec.push(Space::Free);
@@ -60,12 +60,12 @@ pub fn part1(input: String) -> String {
         match left {
             Some(i) => {
                 let last_block = vec.pop().unwrap();
-                vec[i] = last_block
+                vec[i] = last_block;
             }
             None => {
                 break;
             }
-        };
+        }
     }
 
     // checksum
@@ -133,7 +133,7 @@ pub fn part2(input: String) -> String {
     // assert!(input.len().rem(2) == 1);
     input
         .chars()
-        .filter(|c| c.is_ascii_digit())
+        .filter(char::is_ascii_digit)
         .chunks(2)
         .into_iter()
         .map(|mut chunk| {
@@ -147,7 +147,7 @@ pub fn part2(input: String) -> String {
         .enumerate()
         .for_each(|(file_id, (file_len, free_len))| {
             for _ in 0..file_len {
-                vec.push(Space::File(file_id))
+                vec.push(Space::File(file_id));
             }
             if free_len != 0 {
                 // save start index of the free slot

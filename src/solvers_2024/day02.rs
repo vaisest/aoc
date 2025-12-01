@@ -56,7 +56,7 @@ pub fn part2(input: String) -> String {
                 let sequence = vec
                     .iter()
                     .enumerate()
-                    .filter_map(|(j, x)| if i != j { Some(*x) } else { None });
+                    .filter_map(|(j, x)| if i == j { None } else { Some(*x) });
 
                 if verify_sequence_iter(sequence) {
                     return true;

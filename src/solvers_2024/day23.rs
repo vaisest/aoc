@@ -5,7 +5,7 @@ fn parse_input(input: &str) -> (FxHashMap<&str, FxHashSet<&str>>, Vec<&str>, usi
         .map(|line| line.split_once('-').unwrap())
         .collect::<Vec<(&str, &str)>>();
     let mut map: FxHashMap<&str, FxHashSet<_>> = FxHashMap::default();
-    for &(one, two) in mappings.iter() {
+    for &(one, two) in &mappings {
         map.entry(one)
             .and_modify(|set| {
                 set.insert(two);
@@ -75,7 +75,7 @@ fn find_cliques_from(
         }
         // count how many nodes share a neighbour
         let mut both: FxHashMap<&str, usize> = FxHashMap::default();
-        for current_node in current.iter() {
+        for current_node in &current {
             if let Some(destinations) = map.get(current_node) {
                 for &dest in destinations {
                     both.entry(dest).and_modify(|it| *it += 1).or_insert(1);
@@ -83,7 +83,7 @@ fn find_cliques_from(
             }
         }
 
-        for (&dest, &count) in both.iter() {
+        for (&dest, &count) in &both {
             // if both share a neighbour, push it to the stack
             if count == current.len() {
                 let mut new = current.clone();
@@ -121,11 +121,11 @@ fn find_maxmimum_clique_from(
         if current.iter().all(|&s| seen.contains(s)) {
             continue;
         }
-        seen.insert(current.last().unwrap().to_string());
+        seen.insert((*current.last().unwrap()).to_string());
 
         // how many times a neighbour is shared between nodes in current
         let mut new_clique_vertices: FxHashMap<&str, usize> = FxHashMap::default();
-        for node in current.iter() {
+        for node in &current {
             let adjacents = map.get(node).unwrap();
             for &dest in adjacents {
                 new_clique_vertices
@@ -155,7 +155,7 @@ pub fn part2(input: String) -> String {
     // many more start nodes.
 
     for i in (0..=degree).rev() {
-        for start in t_computers.iter() {
+        for start in &t_computers {
             if let Some(res) = find_maxmimum_clique_from(start, &map, i) {
                 return res;
             }

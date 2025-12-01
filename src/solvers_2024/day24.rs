@@ -49,7 +49,7 @@ pub fn part1(input: String) -> String {
     for i in 0..64 {
         let s = format!("z{i:02}");
         if let Some(&val) = wire_map.get(&s.as_str()) {
-            out |= (val as u64) << i;
+            out |= u64::from(val) << i;
         } else {
             break;
         }
@@ -63,13 +63,13 @@ pub fn part2(input: String) -> String {
     let mut wire_map: FxHashMap<&str, Vec<(&str, &str)>> = FxHashMap::default();
 
     // we need a map to know what operations follow another operation
-    for &[lhs, op, rhs, ret] in gate_connections.iter() {
+    for &[lhs, op, rhs, ret] in &gate_connections {
         wire_map.entry(lhs).or_default().push((op, ret));
         wire_map.entry(rhs).or_default().push((op, ret));
     }
 
     let mut wrong_outputs = vec![];
-    for &[lhs, op, rhs, ret] in gate_connections.iter() {
+    for &[lhs, op, rhs, ret] in &gate_connections {
         // basically we ensure the adder looks like this:
         // https://en.wikipedia.org/wiki/Adder_(electronics)#/media/File:Fulladder.gif
         let chained_ops = wire_map.get(&ret);

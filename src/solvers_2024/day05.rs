@@ -7,14 +7,14 @@ fn parse_input(input: String) -> (BTreeSet<(u32, u32)>, Vec<ArrayVec<u32, 24>>) 
 
     let rule_pairs = rules
         .lines()
-        .filter_map(|line| line.split_once("|"))
+        .filter_map(|line| line.split_once('|'))
         .map(|(one, two)| (one.parse::<u32>().unwrap(), two.parse::<u32>().unwrap()))
         .collect::<BTreeSet<(u32, u32)>>();
 
     let updates = pages
         .lines()
         .map(|line| {
-            line.split(",")
+            line.split(',')
                 .map(|it| it.parse::<u32>().unwrap())
                 .collect::<ArrayVec<u32, 24>>()
         })

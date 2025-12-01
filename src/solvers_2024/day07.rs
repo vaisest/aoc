@@ -1,7 +1,7 @@
-fn parse_input<'a>(input: &'a str) -> impl Iterator<Item = (u64, Vec<u64>)> + 'a {
+fn parse_input(input: &str) -> impl Iterator<Item = (u64, Vec<u64>)> + '_ {
     input.lines().map(|line| {
         // split expected result and operands
-        let (res, eq) = line.split_once(":").unwrap();
+        let (res, eq) = line.split_once(':').unwrap();
         let eq_numbers = eq
             // split_once seems to leave trailing whitespace: trim it
             .trim_ascii_start()

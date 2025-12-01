@@ -6,7 +6,7 @@ pub fn part1(input: String) -> String {
 
     for line in input.lines().filter(|x| !x.is_empty()) {
         let (l, r) = line
-            .split_once(" ")
+            .split_once(' ')
             .unwrap_or_else(|| panic!("could not split: {line}"));
 
         left.push(l.parse::<u32>().unwrap());
@@ -16,8 +16,8 @@ pub fn part1(input: String) -> String {
         );
     }
 
-    left.sort();
-    right.sort();
+    left.sort_unstable();
+    right.sort_unstable();
 
     assert_eq!(left.len(), right.len());
 
@@ -35,7 +35,7 @@ pub fn part2(input: String) -> String {
 
     for line in input.lines().filter(|x| !x.is_empty()) {
         let (l, r) = line
-            .split_once(" ")
+            .split_once(' ')
             .unwrap_or_else(|| panic!("could not split: {line}"));
 
         left.push(l.parse::<u32>().unwrap());

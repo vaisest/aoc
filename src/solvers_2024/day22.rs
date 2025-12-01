@@ -84,7 +84,7 @@ pub fn part2(input: String) -> String {
                 continue;
             }
             seen.set(idx, true);
-            map[index(deltas)] += price as i16;
+            map[index(deltas)] += i16::from(price);
         }
     }
 

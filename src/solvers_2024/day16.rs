@@ -173,9 +173,8 @@ fn p2_paths(
                 && shortest_cost < cur.cost
             {
                 continue;
-            } else {
-                shortest_cost.replace(cur.cost);
             }
+            shortest_cost.replace(cur.cost);
             tiles.extend(cur.path.unwrap().into_iter());
             continue;
         }

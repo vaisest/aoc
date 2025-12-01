@@ -100,7 +100,7 @@ fn blocks_any_path(area: &[Vec<Tile>], y: usize, x: usize) -> bool {
 }
 pub fn part2(input: String) -> String {
     let (remaining_bytes, mut area) = parse_input(input);
-    for byte in remaining_bytes.into_iter() {
+    for byte in remaining_bytes {
         area[byte.0][byte.1] = Tile::Wall;
         // we can save time by only checking for path completeness when the new
         // byte was surrounded by two blocks, which means that it blocked a way

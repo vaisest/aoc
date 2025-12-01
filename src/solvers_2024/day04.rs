@@ -51,7 +51,7 @@ pub fn part1(input: String) -> String {
                 _ => continue,
             };
 
-            'dir: for dir in directions.iter() {
+            'dir: for dir in &directions {
                 for mul in (1..=3).rev() {
                     // check the direction scaled by mul and see if we get something or are oob
                     let x = try_apply_direction(y, x, *dir, &mat, mul);

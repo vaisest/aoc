@@ -21,8 +21,8 @@ pub fn part1(input: String) -> String {
     });
 
     let mut total = 0;
-    for lock in locks.iter() {
-        for key in keys.iter() {
+    for lock in &locks {
+        for key in &keys {
             // NAND -> if any overlaps, result is not zero
             if lock & key == 0 {
                 total += 1;

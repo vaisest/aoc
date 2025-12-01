@@ -50,7 +50,7 @@ fn get_function_and_data(year: usize, day: usize) -> ((SolverType, SolverType), 
         },
         2025 => {
             todo!();
-        },
+        }
         _ => {
             todo!();
         }
@@ -58,9 +58,9 @@ fn get_function_and_data(year: usize, day: usize) -> ((SolverType, SolverType), 
     (functions, input)
 }
 fn run_bench(day: usize, part: usize, f: SolverType, input: &str) {
+    const MIN_TIME_MILLIS: u128 = 750;
     let timer = Instant::now();
     let mut run_count = 0;
-    const MIN_TIME_MILLIS: u128 = 750;
     while timer.elapsed().as_millis() < MIN_TIME_MILLIS {
         black_box(f(black_box(input.to_string())));
         run_count += 1;
@@ -69,7 +69,7 @@ fn run_bench(day: usize, part: usize, f: SolverType, input: &str) {
         }
     }
     let total_time = timer.elapsed().as_millis();
-    let per_run_millis = total_time as f64 / run_count as f64;
+    let per_run_millis = total_time as f64 / f64::from(run_count);
     println!(
         "Day {day:2} part {part} benchmark: {run_count:6} runs in {total_time:3} ms at {per_run_millis:3.2} ms per run"
     );

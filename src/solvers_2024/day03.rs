@@ -30,7 +30,7 @@ pub fn part2(input: String) -> String {
                 None => (
                     instr_enable,
                     total
-                        + instr_enable as u32
+                        + u32::from(instr_enable)
                             * (cap.get(2).unwrap().as_str().parse::<u32>().unwrap()
                                 * cap.get(3).unwrap().as_str().parse::<u32>().unwrap()),
                 ),

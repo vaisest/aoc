@@ -68,7 +68,7 @@ fn parse_input(input: String) -> Vec<Robot> {
 
 fn calculate_scores(robots: &[Robot]) -> i64 {
     let mut scores = [0; 4];
-    robots.iter().for_each(|robot| {
+    for robot in robots {
         match robot.get_quadrant() {
             Quadrant::TopLeft => {
                 scores[0] += 1;
@@ -85,7 +85,7 @@ fn calculate_scores(robots: &[Robot]) -> i64 {
             // robots in the middle don't count
             Quadrant::Middle => {}
         }
-    });
+    }
 
     scores.into_iter().reduce(|a, b| a * b).unwrap()
 }
@@ -93,7 +93,7 @@ fn calculate_scores(robots: &[Robot]) -> i64 {
 pub fn part1(input: String) -> String {
     let mut robots = parse_input(input);
 
-    for robot in robots.iter_mut() {
+    for robot in &mut robots {
         robot.iter_by(100);
     }
 
@@ -131,7 +131,7 @@ pub fn part2(input: String) -> String {
     let mut x_grouping = (0, f64::MAX);
     let mut y_grouping = (0, f64::MAX);
     for i in 1..103 {
-        for robot in robots.iter_mut() {
+        for robot in &mut robots {
             robot.iter_by(1);
         }
         // save minimum variance for x and y coordinates
@@ -148,7 +148,7 @@ pub fn part2(input: String) -> String {
     // by solving: x_grouping.0 + 101x = y_grouping.0 + 103y for an integer answer
     let mut y = 3;
     loop {
-        let x = (y_grouping.0 as f64 + 103.0 * y as f64 - x_grouping.0 as f64) / 101.0;
+        let x = (f64::from(y_grouping.0) + 103.0 * f64::from(y) - f64::from(x_grouping.0)) / 101.0;
         if float_basically_integer(x, -9).is_some() {
             break;
         }

@@ -9,7 +9,7 @@ enum Direction {
     Right,
 }
 impl Direction {
-    fn next_dir(&self) -> Self {
+    fn next_dir(self) -> Self {
         match self {
             Direction::Up => Direction::Right,
             Direction::Right => Direction::Down,
@@ -28,7 +28,7 @@ impl Coord {
     fn in_bounds(&self, square_len: usize) -> bool {
         self.y < square_len && self.x < square_len
     }
-    fn apply_dir(&mut self, dir: &Direction) {
+    fn apply_dir(&mut self, dir: Direction) {
         match dir {
             Direction::Up => self.y = self.y.wrapping_sub(1),
             Direction::Right => self.x += 1,
@@ -36,7 +36,7 @@ impl Coord {
             Direction::Left => self.x = self.x.wrapping_sub(1),
         }
     }
-    fn next_pos_towards(&self, dir: &Direction) -> Self {
+    fn next_pos_towards(&self, dir: Direction) -> Self {
         match dir {
             Direction::Up => Coord {
                 y: self.y.wrapping_sub(1),
@@ -103,7 +103,7 @@ fn walk(spawn_pos: &Coord, matrix: &Matrix) -> FxHashMap<Coord, Direction> {
     while pos.in_bounds(matrix.len()) {
         loop {
             if pos
-                .next_pos_towards(&dir)
+                .next_pos_towards(dir)
                 .get_from(matrix)
                 .is_some_and(|&it| it == Cell::Blocker)
             {
@@ -113,7 +113,7 @@ fn walk(spawn_pos: &Coord, matrix: &Matrix) -> FxHashMap<Coord, Direction> {
             }
         }
         visited.insert(pos, dir);
-        pos.apply_dir(&dir);
+        pos.apply_dir(dir);
     }
     visited
 }
@@ -124,7 +124,7 @@ pub fn part1(input: String) -> String {
     walk(&pos, &matrix).len().to_string()
 }
 
-fn idx_for_dir(dir: &Direction) -> usize {
+fn idx_for_dir(dir: Direction) -> usize {
     match dir {
         Direction::Up => 0,
         Direction::Right => 1,
@@ -146,13 +146,13 @@ fn test_for_cycle(
     let mut visited = vec![false; matrix.len() * matrix.len() * 4];
 
     while pos.in_bounds(matrix.len()) {
-        if visited[pos.y * matrix.len() * 4 + pos.x * 4 + idx_for_dir(&direction)] {
+        if visited[pos.y * matrix.len() * 4 + pos.x * 4 + idx_for_dir(direction)] {
             return true;
         }
-        visited[pos.y * matrix.len() * 4 + pos.x * 4 + idx_for_dir(&direction)] = true;
+        visited[pos.y * matrix.len() * 4 + pos.x * 4 + idx_for_dir(direction)] = true;
         // edge case: multiple blockers near the guard -> turn multiple times
         loop {
-            let front = pos.next_pos_towards(&direction);
+            let front = pos.next_pos_towards(direction);
             if front
                 .get_from(matrix)
                 .is_some_and(|&it| it == Cell::Blocker)
@@ -163,7 +163,7 @@ fn test_for_cycle(
                 break;
             }
         }
-        pos.apply_dir(&direction);
+        pos.apply_dir(direction);
     }
     // we went out of bounds without being in a loop
     // -> successfully traversed so no cycle
@@ -187,9 +187,9 @@ pub fn part2(input: String) -> String {
     let visited = walk(&pos, &matrix);
     // avoid getting duplicates for blockers in overlapping paths
     let mut seen = vec![false; 130 * 130];
-    for (spawn_point, spawn_dir) in visited.into_iter() {
+    for (spawn_point, spawn_dir) in visited {
         // test-simulate if we get a loop, and count it if we do
-        let blocker_spot = spawn_point.next_pos_towards(&spawn_dir);
+        let blocker_spot = spawn_point.next_pos_towards(spawn_dir);
         if blocker_spot.in_bounds(matrix.len())
             && blocker_spot
                 .get_from(&matrix)
