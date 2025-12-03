@@ -51,7 +51,7 @@ fn get_function_and_data(year: usize, day: usize) -> ((SolverType, SolverType), 
         2025 => match day {
             1 => (solvers_2025::day01::part1, solvers_2025::day01::part2),
             2 => (solvers_2025::day02::part1, solvers_2025::day02::part2),
-            // 3 => (solvers_2025::day03::part1, solvers_2025::day03::part2),
+            3 => (solvers_2025::day03::part1, solvers_2025::day03::part2),
             // 4 => (solvers_2025::day04::part1, solvers_2025::day04::part2),
             // 5 => (solvers_2025::day05::part1, solvers_2025::day05::part2),
             // 6 => (solvers_2025::day06::part1, solvers_2025::day06::part2),
