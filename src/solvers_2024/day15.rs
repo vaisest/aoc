@@ -1,4 +1,4 @@
-use super::util::Direction;
+use crate::util::Direction;
 
 #[derive(Clone, Copy)]
 enum AreaElement {

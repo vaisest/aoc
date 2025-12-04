@@ -1,6 +1,6 @@
 use regex::Regex;
 
-use super::util::float_basically_integer;
+use crate::util::float_basically_integer;
 
 fn gaussian_elimination(mut matrix: [[f64; 3]; 2]) -> (f64, f64) {
     // our matrix is

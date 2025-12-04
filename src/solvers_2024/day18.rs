@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use super::util::{adjacent_in_bounds, get_2d};
+use crate::util::{adjacent_in_bounds, get_2d};
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum Tile {

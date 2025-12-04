@@ -1,6 +1,6 @@
 use rustc_hash::FxHashSet;
 
-use super::util::adjacent_in_bounds;
+use crate::util::adjacent_in_bounds;
 
 fn traverse(
     i: usize,

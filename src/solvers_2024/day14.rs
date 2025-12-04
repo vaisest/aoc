@@ -1,6 +1,6 @@
 use regex::Regex;
 
-use crate::solvers_2024::util::float_basically_integer;
+use crate::util::float_basically_integer;
 
 struct Robot {
     x: i64,

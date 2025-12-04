@@ -2,7 +2,7 @@ use std::collections::BinaryHeap;
 
 use rustc_hash::{FxHashMap, FxHashSet};
 
-use super::util::Direction;
+use crate::util::Direction;
 
 #[derive(PartialEq)]
 enum Element {

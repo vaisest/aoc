@@ -1,6 +1,6 @@
 use bitvec::prelude::*;
 
-use super::util::adjacent_in_bounds;
+use crate::util::adjacent_in_bounds;
 
 fn traverse(i: usize, j: usize, matrix: &Matrix) -> u64 {
     // simple counting bfs

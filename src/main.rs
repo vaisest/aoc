@@ -3,6 +3,7 @@ use std::{fs, hint::black_box, time::Instant};
 
 mod solvers_2024;
 mod solvers_2025;
+mod util;
 
 fn read_input(year: &str, day: &str) -> String {
     let path = format!("input/{year}/day_{day}.txt");
@@ -52,7 +53,7 @@ fn get_function_and_data(year: usize, day: usize) -> ((SolverType, SolverType), 
             1 => (solvers_2025::day01::part1, solvers_2025::day01::part2),
             2 => (solvers_2025::day02::part1, solvers_2025::day02::part2),
             3 => (solvers_2025::day03::part1, solvers_2025::day03::part2),
-            // 4 => (solvers_2025::day04::part1, solvers_2025::day04::part2),
+            4 => (solvers_2025::day04::part1, solvers_2025::day04::part2),
             // 5 => (solvers_2025::day05::part1, solvers_2025::day05::part2),
             // 6 => (solvers_2025::day06::part1, solvers_2025::day06::part2),
             // 7 => (solvers_2025::day07::part1, solvers_2025::day07::part2),

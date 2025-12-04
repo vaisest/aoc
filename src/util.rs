@@ -15,6 +15,35 @@ pub fn adjacent_in_bounds(
     })
 }
 
+// like adjacent_in_bounds, but with diagonals too
+// returns iterator of (ny, nx)
+pub fn all_adjacent_in_bounds(
+    y: usize,
+    x: usize,
+    matrix_len: usize,
+) -> impl Iterator<Item = (usize, usize)> {
+    // L, R, T, B, TL, TR, BL, BR (dx, dy)
+    const ADJACENTS: [(i32, i32); 8] = [
+        (-1, 0),
+        (1, 0),
+        (0, -1),
+        (0, 1),
+        (-1, -1),
+        (1, -1),
+        (-1, 1),
+        (1, 1),
+    ];
+    ADJACENTS.iter().filter_map(move |(dy, dx)| {
+        let pair = (y as i32 + *dy, x as i32 + *dx);
+        let legal_range = 0..(matrix_len as i32);
+        if legal_range.contains(&pair.0) && legal_range.contains(&pair.1) {
+            Some((pair.0 as usize, pair.1 as usize))
+        } else {
+            None
+        }
+    })
+}
+
 pub fn get_2d<T>(matrix: &[Vec<T>], (y, x): (usize, usize)) -> Option<&T> {
     matrix.get(y).and_then(|row| row.get(x))
 }
