@@ -26,7 +26,7 @@ def write_day(year, day, data):
 def fetch(year, day):
     file = Path(f"input/{year}/day_{day:02}.txt")
     if file.exists():
-        return
+        return True
 
     print(f"Fetching day {day}")
     req = urllib.request.Request(f"https://adventofcode.com/{year}/day/{day}/input")
@@ -37,12 +37,15 @@ def fetch(year, day):
     except HTTPError as e:
         if e.code == 404:
             print(f"Year {year} day {day} not available yet")
-            return
+            return False
         raise e
+    return True
 
 
 for day in range(1, 25 + 1):
-    fetch(2024, day)
+    if not fetch(2024, day):
+        break
 
 for day in range(1, 12 + 1):
-    fetch(2025, day)
+    if not fetch(2025, day):
+        break

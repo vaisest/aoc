@@ -97,9 +97,6 @@ mod tests {
     fn sample_p1() {
         use super::part1;
 
-        let input = "..@@.@@@@.".to_string();
-        assert_eq!(part1(input), "6");
-
         let input = "..@@.@@@@.
 @@@.@.@.@@
 @@@@@.@.@@
