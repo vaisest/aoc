@@ -40,10 +40,12 @@ pub fn part2(input: String) -> String {
                     .max_by(|(_, a), (_, b)| {
                         // differs from a.cmp(b) by not having equality. this means
                         // the first max is returned and not the last max
-                        if a > b {
-                            std::cmp::Ordering::Greater
-                        } else {
+                        if a < b {
+                            // https://github.com/rust-lang/rust/pull/139357/files
+                            // the order here actually matters. Returning a > b => Greater makes the result differ on rustc 1.90 and 1.91
                             std::cmp::Ordering::Less
+                        } else {
+                            std::cmp::Ordering::Greater
                         }
                     })
                     .unwrap();
