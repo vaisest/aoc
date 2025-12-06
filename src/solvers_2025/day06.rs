@@ -1,5 +1,3 @@
-use core::num;
-
 use arrayvec::ArrayVec;
 
 pub fn part1(input: String) -> String {
@@ -30,25 +28,47 @@ pub fn part1(input: String) -> String {
 pub fn part2(input: String) -> String {
     let input: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
 
-    // println!("{}", input.len());
     let width = input[0].len();
     // actual input is 1 more row than test
     let height = input.len();
-    assert!(input.iter().all(|line| line.len() == width));
+    assert!(
+        input.iter().all(|line| line.len() == width),
+        "malformed input"
+    );
 
     let mut total = 0;
-    for block_idx in (0..width).step_by(4) {
+    // we use the operator row as our index and find the column width (which is
+    // variable) by counting until the next column
+    for (col_idx, operator) in input[height - 1]
+        .iter()
+        .enumerate()
+        .filter(|v| !v.1.is_ascii_whitespace())
+    {
+        let mut col_width = 0;
+        for idx_elem in &input[height - 1][(col_idx + 1)..] {
+            if idx_elem.is_whitespace() {
+                col_width += 1;
+            } else {
+                break;
+            }
+        }
+        // edge case: right edge
+        if col_width + col_idx == width - 1 {
+            col_width += 1;
+        }
+
         let mut combined = Vec::new();
-        for i in (0..3).rev() {
+        // numbers are read from right to left
+        for x in (0..col_width).rev() {
             let mut numbers = [0; 4];
-            for j in 0..(height - 1) {
-                if let Some(n) = input[j][block_idx + i].to_digit(10) {
-                    numbers[j] = n as u64;
+            for y in 0..(height - 1) {
+                if let Some(n) = input[y][col_idx + x].to_digit(10) {
+                    numbers[y] = n as u64;
                 }
             }
             // the input doesn't seem to have any zeroes anywhere
-            println!("{numbers:?}");
             combined.push(
+                // concatenate digits
                 numbers
                     .into_iter()
                     .filter(|&v| v != 0)
@@ -56,7 +76,6 @@ pub fn part2(input: String) -> String {
                     .unwrap(),
             );
         }
-        let operator = input[height - 1][block_idx];
         match operator {
             '*' => total += combined.into_iter().reduce(|a, b| a * b).unwrap(),
             '+' => total += combined.into_iter().reduce(|a, b| a + b).unwrap(),

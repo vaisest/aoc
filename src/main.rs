@@ -108,7 +108,7 @@ fn main() {
     let year = args.year.unwrap_or(2025);
 
     let from = args.day.unwrap_or(1);
-    let to = args.day.unwrap_or(25);
+    let to = args.day.unwrap_or(12);
     for day in from..=to {
         let ((p1, p2), input) = get_function_and_data(year, day);
         if args.benchmark {

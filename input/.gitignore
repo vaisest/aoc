@@ -6,5 +6,6 @@
 *
 !2024/
 !2025/
-# Except this file
+# Except git files
 !.gitignore
+!.gitkeep
