@@ -7,11 +7,16 @@ mod util;
 
 fn read_input(year: &str, day: &str) -> String {
     let path = format!("input/{year}/day_{day}.txt");
-    fs::read_to_string(&path)
+    let out = fs::read_to_string(&path)
         .unwrap_or_else(|e| panic!("could not read input file from {path} with error {e}"))
         // rust seems to have a crazy amount of trouble with windows line
         // endings and splitting strings
-        .replace("\r\n", "\n")
+        .replace("\r\n", "\n");
+    assert!(
+        out.is_ascii(),
+        "non-ascii input detected. the file might be not be correct."
+    );
+    out
 }
 
 type SolverType = fn(String) -> String;
@@ -74,17 +79,24 @@ fn run_bench(day: usize, part: usize, f: SolverType, input: &str) {
     const MIN_TIME_MILLIS: u128 = 750;
     let timer = Instant::now();
     let mut run_count = 0;
-    while timer.elapsed().as_millis() < MIN_TIME_MILLIS {
+    while timer.elapsed().as_millis() < MIN_TIME_MILLIS && run_count < 3333 {
         black_box(f(black_box(input.to_string())));
         run_count += 1;
-        if run_count > 3333 {
-            break;
-        }
     }
-    let total_time = timer.elapsed().as_millis();
-    let per_run_millis = total_time as f64 / f64::from(run_count);
+    let total_time = timer.elapsed();
+    let total_time_ms = total_time.as_millis();
+
+    let per_run = total_time_ms as f64 / f64::from(run_count);
+    let (per_run, unit) = if per_run < 0.001 {
+        // nothing will probably be fast enough to be measured in ns
+        (total_time.as_nanos() as f64 / f64::from(run_count), "ns")
+    } else if per_run < 1.0 {
+        (total_time.as_micros() as f64 / f64::from(run_count), "µs")
+    } else {
+        (per_run, "ms")
+    };
     println!(
-        "Day {day:2} part {part} benchmark: {run_count:6} runs in {total_time:3} ms at {per_run_millis:3.2} ms per run"
+        "Day {day:2} part {part} benchmark: {run_count:4} runs in {total_time_ms:3} ms at {per_run:6.1} {unit} per run"
     );
 }
 
@@ -108,7 +120,7 @@ fn main() {
     let year = args.year.unwrap_or(2025);
 
     let from = args.day.unwrap_or(1);
-    let to = args.day.unwrap_or(12);
+    let to = args.day.unwrap_or(if year == 2025 { 7 } else { 25 });
     for day in from..=to {
         let ((p1, p2), input) = get_function_and_data(year, day);
         if args.benchmark {
