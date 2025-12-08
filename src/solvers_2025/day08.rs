@@ -17,8 +17,8 @@ fn dist(a: &Coord, b: &Coord) -> i64 {
     (a.x - b.x).pow(2) + (a.y - b.y).pow(2) + (a.z - b.z).pow(2)
 }
 
-pub fn part1(input: String) -> String {
-    let boxes = input
+fn parse_input(input: String) -> Vec<Coord> {
+    input
         .lines()
         .map(|line| {
             let (x, y, z) = line
@@ -31,26 +31,36 @@ pub fn part1(input: String) -> String {
                 .expect("input should consist of triples");
             Coord { x, y, z }
         })
-        .collect::<Vec<_>>();
+        .collect::<Vec<_>>()
+}
 
-    // getting the distances from a min heap is much faster
+fn connections_iter(boxes: &[Coord]) -> impl Iterator<Item = (usize, usize)> {
+    // getting the distances from a min heap is much faster compared to sorting
+    // an iterator
     let mut heap = BinaryHeap::from_iter(
         (0..boxes.len())
             .tuple_combinations()
             .map(|(i, j)| Reverse((dist(&boxes[i], &boxes[j]), i, j))),
     );
-
-    // test input has a different amount of connections
-    let connection_count = if boxes.len() == 20 { 10 } else { 1000 };
-    // into_sorted_iter is nightly so we have this monster
-    let connections_to_make = (0..connection_count).map(|_| {
+    // nightly seems to have into_sorted_iter, but other than that the only
+    // option is into_sorted_vec, which would make sense but it's close to 6x as
+    // slow. This works like into_sorted_iter
+    (0..heap.len()).map(move |_| {
         let v = heap.pop().unwrap();
         (v.0.1, v.0.2)
-    });
+    })
+}
+
+pub fn part1(input: String) -> String {
+    let boxes = parse_input(input);
+    // test input has a different amount of connections
+    let connection_count = if boxes.len() == 20 { 10 } else { 1000 };
+
+    let connections_to_make = connections_iter(&boxes);
 
     let mut connections = vec![];
     // we partly merge connections. This merges e.g. (i,j) and (j, k), but not (i,j), (k, l), and (l, i)
-    for (i, j) in connections_to_make {
+    for (i, j) in connections_to_make.take(connection_count) {
         if connections.is_empty() {
             connections.push(FxHashSet::from_iter([i, j]));
         }
@@ -69,8 +79,8 @@ pub fn part1(input: String) -> String {
             connections.push(FxHashSet::from_iter([i, j]));
         }
     }
-    // iteratively merge the unmerged circuits from the last step
 
+    // iteratively merge the unmerged circuits from the last step
     'outer: loop {
         for i in 0..connections.len() {
             let mut to_combine = vec![i];
@@ -99,6 +109,7 @@ pub fn part1(input: String) -> String {
         break;
     }
 
+    // multiply the sizes of the 3 largest circuits
     connections
         .into_iter()
         .map(|v| v.len())
@@ -110,109 +121,70 @@ pub fn part1(input: String) -> String {
         .to_string()
 }
 
-pub fn part2(input: String) -> String {
-    let boxes = input
-        .lines()
-        .map(|line| {
-            let (x, y, z) = line
-                .split(",")
-                .map(|it| {
-                    it.parse::<_>()
-                        .unwrap_or_else(|_| panic!("error parsing {it}"))
-                })
-                .next_tuple()
-                .expect("input should consist of triples");
-            Coord { x, y, z }
-        })
-        .collect::<Vec<_>>();
+struct UnionFind {
+    parents: Vec<usize>,
+    ranks: Vec<usize>,
+    set_count: usize,
+}
 
-    // getting the distances from a min heap is much faster
-    let mut heap = BinaryHeap::from_iter(
-        (0..boxes.len())
-            .tuple_combinations()
-            .map(|(i, j)| Reverse((dist(&boxes[i], &boxes[j]), i, j))),
-    );
-
-    let sorted_vec = (0..heap.len())
-        .map(|_| {
-            let v = heap.pop().unwrap();
-            (v.0.1, v.0.2)
-        })
-        .collect::<Vec<(usize, usize)>>();
-
-    // test input has a different amount of connections
-    let mut connection_count = if boxes.len() == 20 { 1 } else { 1000 };
-    let mut res = -1;
-    let mut res2 = (Coord { x: 0, y: 0, z: 0 }, Coord { x: 0, y: 0, z: 0 });
-    loop {
-        // into_sorted_iter is nightly so we have this monster
-        println!("testing connection count {connection_count}");
-        let connections_to_make = sorted_vec.iter().take(connection_count);
-
-        let mut connections = vec![];
-        // we partly merge connections. This merges e.g. (i,j) and (j, k), but not (i,j), (k, l), and (l, i)
-        for (i, j) in connections_to_make {
-            if connections.is_empty() {
-                connections.push(FxHashSet::from_iter([i, j]));
-            }
-            res = boxes[*i].x * boxes[*j].x;
-            res2 = (boxes[*i], boxes[*j]);
-            let mut was_inserted = false;
-            for circuit in connections.iter_mut() {
-                if circuit.contains(&i) {
-                    circuit.insert(j);
-                    was_inserted = true;
-                }
-                if circuit.contains(&j) {
-                    circuit.insert(i);
-                    was_inserted = true;
-                }
-            }
-            if !was_inserted {
-                connections.push(FxHashSet::from_iter([i, j]));
-            }
+// https://www.geeksforgeeks.org/dsa/introduction-to-disjoint-set-data-structure-or-union-find-algorithm/
+impl UnionFind {
+    fn find(&mut self, v: usize) -> usize {
+        let root = self.parents[v];
+        // compress
+        if self.parents[root] != root {
+            self.parents[v] = self.find(root);
+            return self.parents[v];
         }
-        // iteratively merge the unmerged circuits from the last step
+        root
+    }
+    fn unite(&mut self, x: usize, y: usize) {
+        let x_root = self.find(x);
+        let y_root = self.find(y);
 
-        'outer: loop {
-            // dbg!(&connections);
-            for i in 0..connections.len() {
-                let mut to_combine = vec![i];
-                for j in 0..connections.len() {
-                    if i == j {
-                        continue;
-                    }
-                    if connections[i]
-                        .intersection(&connections[j])
-                        .next()
-                        .is_some()
-                    {
-                        to_combine.push(j);
-                    }
-                }
-                if to_combine.len() > 1 {
-                    let mut combined = FxHashSet::default();
-                    for idx in to_combine.into_iter().sorted().rev() {
-                        combined.extend(connections.remove(idx));
-                    }
-                    connections.push(combined);
-                    // we modified the list we're iterating over, so we should restart
-                    continue 'outer;
-                }
-            }
-            break;
+        // already united
+        if x_root == y_root {
+            return;
         }
-        // dbg!(connections.len(), &res2);
-        if connections.len() == 1
-            && (0..boxes.len()).all(|idx| connections.iter().any(|v| v.contains(&idx)))
-        {
-            break;
+
+        self.set_count -= 1;
+        if self.ranks[x_root] < self.ranks[y_root] {
+            self.parents[x_root] = y_root;
+        } else if self.ranks[x_root] > self.ranks[y_root] {
+            self.parents[y_root] = x_root;
         } else {
-            connection_count += 1;
+            self.parents[y_root] = x_root;
+            self.ranks[x_root] += 1;
         }
     }
 
-    res.to_string()
+    fn are_all_merged(&mut self) -> bool {
+        self.set_count == 1
+    }
+
+    fn new(count: usize) -> Self {
+        Self {
+            parents: Vec::from_iter(0..count),
+            ranks: vec![0; count],
+            set_count: count,
+        }
+    }
+}
+
+pub fn part2(input: String) -> String {
+    let boxes = parse_input(input);
+    let mut connections_to_make = connections_iter(&boxes);
+
+    // // start with everything being its own parent
+    let mut uf = UnionFind::new(boxes.len());
+
+    let mut i = 0;
+    let mut j = 0;
+    while !uf.are_all_merged() {
+        (i, j) = connections_to_make.next().unwrap();
+        uf.unite(i, j);
+    }
+    (boxes[i].x * boxes[j].x).to_string()
 }
 
 #[cfg(test)]
