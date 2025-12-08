@@ -1,4 +1,4 @@
-use std::time::Instant;
+use std::{cmp::Reverse, collections::BinaryHeap};
 
 use itertools::Itertools;
 use rustc_hash::FxHashSet;
@@ -33,19 +33,23 @@ pub fn part1(input: String) -> String {
         })
         .collect::<Vec<_>>();
 
+    // getting the distances from a min heap is much faster
+    let mut heap = BinaryHeap::from_iter(
+        (0..boxes.len())
+            .tuple_combinations()
+            .map(|(i, j)| Reverse((dist(&boxes[i], &boxes[j]), i, j))),
+    );
+
     // test input has a different amount of connections
     let connection_count = if boxes.len() == 20 { 10 } else { 1000 };
+    // into_sorted_iter is nightly so we have this monster
+    let connections_to_make = (0..connection_count).map(|_| {
+        let v = heap.pop().unwrap();
+        (v.0.1, v.0.2)
+    });
 
-    let timer = Instant::now();
-    let connections_to_make = (0..boxes.len())
-        .tuple_combinations()
-        .filter_map(|(i, j)| if i == j { None } else { Some((i, j)) })
-        .sorted_by_cached_key(|(a, b)| dist(&boxes[*a], &boxes[*b]))
-        .take(connection_count);
-    println!("{} ms", timer.elapsed().as_millis());
     let mut connections = vec![];
     // we partly merge connections. This merges e.g. (i,j) and (j, k), but not (i,j), (k, l), and (l, i)
-    let timer = Instant::now();
     for (i, j) in connections_to_make {
         if connections.is_empty() {
             connections.push(FxHashSet::from_iter([i, j]));
@@ -65,9 +69,7 @@ pub fn part1(input: String) -> String {
             connections.push(FxHashSet::from_iter([i, j]));
         }
     }
-    println!("{} ms", timer.elapsed().as_millis());
     // iteratively merge the unmerged circuits from the last step
-    let timer = Instant::now();
 
     'outer: loop {
         for i in 0..connections.len() {
@@ -96,7 +98,6 @@ pub fn part1(input: String) -> String {
         }
         break;
     }
-    println!("{} ms\n", timer.elapsed().as_millis());
 
     connections
         .into_iter()
