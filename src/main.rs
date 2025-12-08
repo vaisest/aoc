@@ -62,7 +62,7 @@ fn get_function_and_data(year: usize, day: usize) -> ((SolverType, SolverType), 
             5 => (solvers_2025::day05::part1, solvers_2025::day05::part2),
             6 => (solvers_2025::day06::part1, solvers_2025::day06::part2),
             7 => (solvers_2025::day07::part1, solvers_2025::day07::part2),
-            // 8 => (solvers_2025::day08::part1, solvers_2025::day08::part2),
+            8 => (solvers_2025::day08::part1, solvers_2025::day08::part2),
             // 9 => (solvers_2025::day09::part1, solvers_2025::day09::part2),
             // 10 => (solvers_2025::day10::part1, solvers_2025::day10::part2),
             // 11 => (solvers_2025::day11::part1, solvers_2025::day11::part2),
@@ -120,7 +120,7 @@ fn main() {
     let year = args.year.unwrap_or(2025);
 
     let from = args.day.unwrap_or(1);
-    let to = args.day.unwrap_or(if year == 2025 { 7 } else { 25 });
+    let to = args.day.unwrap_or(if year == 2025 { 12 } else { 25 });
     for day in from..=to {
         let ((p1, p2), input) = get_function_and_data(year, day);
         if args.benchmark {
