@@ -66,7 +66,7 @@ fn get_function_and_data(year: usize, day: usize) -> ((SolverType, SolverType), 
             9 => (solvers_2025::day09::part1, solvers_2025::day09::part2),
             10 => (solvers_2025::day10::part1, solvers_2025::day10::part2),
             11 => (solvers_2025::day11::part1, solvers_2025::day11::part2),
-            // 12 => (solvers_2025::day12::part1, solvers_2025::day12::part2),
+            12 => (solvers_2025::day12::part1, solvers_2025::day12::part2),
             _ => todo!(),
         },
         _ => {

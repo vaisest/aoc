@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 use itertools::Itertools;
 use regex::Regex;
 use rustc_hash::FxHashSet;
@@ -27,7 +29,7 @@ fn search_solution(goal_lights: Lights, buttons: Vec<Lights>) -> u8 {
         s.push((press_button(ZERO_LIGHT, *button), 1, presses));
     }
     let mut seen = FxHashSet::default();
-    while let Some((state, press_count, presses)) = s.pop() {
+    'outer: while let Some((state, press_count, presses)) = s.pop() {
         if press_count >= min || press_count > 10 || seen.contains(&presses) {
             continue;
         }
@@ -37,7 +39,12 @@ fn search_solution(goal_lights: Lights, buttons: Vec<Lights>) -> u8 {
             continue;
         }
         for (i, button) in buttons.iter().enumerate() {
-            // not sure if these should be pressed more than once?
+            // pressing buttons more than once doesn't actually do anything as
+            // it simply reverts the previous action. this cuts down the search
+            // space quite a lot.
+            if presses.iter().any(|v| *v > 1) {
+                continue 'outer;
+            }
             let mut new_presses = presses;
             new_presses[i] += 1;
             s.push((press_button(state, *button), press_count + 1, new_presses));
