@@ -1,13 +1,11 @@
-use std::time::Instant;
-
 use itertools::Itertools;
 use regex::Regex;
-use rustc_hash::FxHashSet;
 use z3::{Optimize, SatResult, ast::Int};
 
 // my input only has max 10 lights
-type Lights = [bool; 10];
-const ZERO_LIGHT: [bool; 10] = [false; 10];
+const LIGHT_LEN: usize = 10;
+type Lights = [bool; LIGHT_LEN];
+const ZERO_LIGHT: [bool; LIGHT_LEN] = [false; LIGHT_LEN];
 
 fn press_button(mut lights: Lights, button: Lights) -> Lights {
     for (i, light) in button.into_iter().enumerate() {
@@ -17,40 +15,19 @@ fn press_button(mut lights: Lights, button: Lights) -> Lights {
 }
 
 fn search_solution(goal_lights: Lights, buttons: Vec<Lights>) -> u8 {
-    let mut min = u8::MAX;
-    // tuples of current state, total press count, and individual press count.
-    // The total press count is redundant but avoid extra summation
-    let mut s = vec![];
-    for (i, button) in buttons.iter().enumerate() {
-        // my input had max 13 buttons per light set. this tracks the times each
-        // button has been pressed
-        let mut presses = [0u8; 16];
-        presses[i] = 1;
-        s.push((press_button(ZERO_LIGHT, *button), 1, presses));
-    }
-    let mut seen = FxHashSet::default();
-    'outer: while let Some((state, press_count, presses)) = s.pop() {
-        if press_count >= min || press_count > 10 || seen.contains(&presses) {
-            continue;
-        }
-        seen.insert(presses);
-        if state == goal_lights {
-            min = min.min(press_count);
-            continue;
-        }
-        for (i, button) in buttons.iter().enumerate() {
-            // pressing buttons more than once doesn't actually do anything as
-            // it simply reverts the previous action. this cuts down the search
-            // space quite a lot.
-            if presses.iter().any(|v| *v > 1) {
-                continue 'outer;
+    // all of the solutions are actually <= 7 presses
+    for i in 1..=10 {
+        for combo in buttons.iter().combinations(i) {
+            let mut lights = ZERO_LIGHT;
+            for button in combo {
+                lights = press_button(lights, *button);
             }
-            let mut new_presses = presses;
-            new_presses[i] += 1;
-            s.push((press_button(state, *button), press_count + 1, new_presses));
+            if lights == goal_lights {
+                return i.try_into().unwrap();
+            }
         }
     }
-    min
+    panic!("no solution found for lights {goal_lights:?} with buttons {buttons:?}");
 }
 
 pub fn part1(input: String) -> String {
